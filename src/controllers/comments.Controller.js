@@ -1,20 +1,20 @@
 const asyncHandler = require("../middleware/asyncHandler");
-//const db = require("../services/database");
 const { Op, QueryTypes, Sequelize } = require("sequelize");
 const e = require("express");
-const comments = require("../models/comments");
 const users = require("../models/users");
+const product = require("../models/product"); 
+const comments = require("../models/comments");
 
 exports.createComment = asyncHandler(async (req, res, netx) => {
   // try{
   const userid = req.userid;
-  const pollId = req.params.id;
+  const productid  = req.params.id;
   const {comment} = req.body;
  // console.log(Date.now());
  if(comment){
   const newComment = await comments.create({
   userid:userid,
-  pollid:pollId,
+  productid:productid,
   comment : comment,
 });
 
@@ -26,6 +26,7 @@ if(newComment){
     success: true,
     data: newComment
   });
+
 }else{
   // console.log("-----------------------------------------")
   return res.status(500).json({
@@ -41,22 +42,22 @@ else{ res.status(400).json({success: false,message: "table is empty"});}
 
 exports.getComments = asyncHandler(async (req, res, next) => {
   const id = req.params.id; 
-  const pollComments = await comments.findAll({
+  const productComments = await comments.findAll({
     where: {
-      pollid: id,
+      productid: id,
     },
     order:[["createdAt","DESC"]]
   });
-  for(let i in pollComments){
+  for(let i in productComments){
     const user = await users.findOne({
       where:{
-        id:pollComments[i].userid
+        id:productComments[i].userid
       }
     });
-    pollComments[i].username = user.username;
+    productComments[i].username = user.username;
   }
-  if (pollComments) {
-    res.status(200).json(pollComments);
+  if (productComments) {
+    res.status(200).json(productComments);
   } else {
     res.status(400).json("Comments doesn't exist!");
   }

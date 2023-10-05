@@ -2,9 +2,12 @@ const { DataTypes, Model } = require('sequelize');
 const moment = require('moment');
 const ProductInventory = require('./product_inventory');
 const ProductCategory = require('./product_category');
+const db = require("../services/database"); 
 
-module.exports = (sequelize) => {
-  const Product = sequelize.define('Product', {
+class Product extends Model {}
+
+Product.init(
+  {
     id: {
       type: DataTypes.INTEGER,
       primaryKey: true,
@@ -34,21 +37,25 @@ module.exports = (sequelize) => {
     updatedAt: {
       type: DataTypes.DATE,
     },
-    
-  });
-// Define the association to ProductCategory
+  },
+  {
+    sequelize: db,
+    modelName: 'Product',
+    freezeTableName: true,
+  }
+);
+
 Product.belongsTo(ProductCategory, {
-    foreignKey: "category_id",
-    targetKey: "id",
-    onDelete: "CASCADE",
-    onUpdate: "CASCADE",
-  });
-  
-  // Define the association to ProductInventory
-  Product.hasMany(ProductInventory, {
-    foreignKey: "product_id",
-    onDelete: "CASCADE",
-    onUpdate: "CASCADE",
-  });
-  return Product;
-};
+  foreignKey: "category_id",
+  targetKey: "id",
+  onDelete: "CASCADE",
+  onUpdate: "CASCADE",
+});
+
+Product.hasMany(ProductInventory, {
+  foreignKey: "product_id",
+  onDelete: "CASCADE",
+  onUpdate: "CASCADE",
+});
+
+module.exports = Product;

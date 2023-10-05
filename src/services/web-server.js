@@ -16,14 +16,17 @@ const port = process.env.PORT;
 //const indexRoute = require('./routes/index.Route');
 const loginRoute = require('../routes/login.Route');
 const usersRoute = require('../routes/users.Route');
-const pollsRoute = require('../routes/polls.Route');
-const poll_answerRoute = require('../routes/poll_answer.Route');
-const poll_attendanceRoute = require('../routes/poll_attendance.Route');
 const commentsRoute = require('../routes/comments.Route');
+const productRoute = require('../routes/product.Route');
 //db table add 
 const Users = require('../models/users')
 const Comments = require('../models/comments')
 const Upload = require('../models/upload');
+const Product = require('../models/product');
+const ProductCategory = require('../models/product_category');
+const ProductInventory = require('../models/product_inventory');
+const ProductRating = require('../models/product_rating');
+
 
 // const scheduler = require("./scheduler"); // устгаж болохгүй!!!
 //uuganaaa
@@ -57,11 +60,13 @@ function initialize() {
   const usersRoute = require('../routes/users.Route');
   const commentsRoute = require('../routes/comments.Route');
   const uploadRoute = require('../routes/upload.Route');
+  const productRoute = require('../routes/product.Route');
 
   app.use('/auth', loginRoute);
   app.use('/user', usersRoute);
   app.use('/comment', commentsRoute);
-  app.use('/image',uploadRoute );
+  app.use('/image',uploadRoute);
+  app.use('/product', productRoute);
   app.use('/uploads', express.static(path.join(__dirname, '../src/upload'))); // Serve static files from the 'src/upload' folder
   app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, '../src/upload/index.html'));

@@ -16,7 +16,7 @@ Comment.init(
     product_id: {
       type: DataTypes.INTEGER,
       references: {
-        model: Polls,
+        model: Product, 
         key: 'id'
       },
     },
@@ -45,7 +45,7 @@ Comment.init(
   {
     sequelize: db,
     modelName: 'comments',
-    tableName: 'comments', // Added tableName property
+    tableName: 'comments',
     freezeTableName: true,
   }
 );
@@ -56,8 +56,8 @@ Comment.belongsTo(Users, {
   onDelete: 'CASCADE',
 });
 
-Comment.belongsTo(Product, {
-  foreignKey: 'pollid',
+Comment.belongsTo(Product, { 
+  foreignKey: 'product_id',
   targetKey: 'id',
   onDelete: 'CASCADE',
 });
