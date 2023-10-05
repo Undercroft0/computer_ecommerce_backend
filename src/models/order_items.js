@@ -1,8 +1,8 @@
 const { DataTypes, Model } = require('sequelize');
 const moment = require('moment');
 const OrderDetails = require('./order_details');
+const Product = require('./product');
 const db = require('../services/database');
-
 
 class OrderItems extends Model {}
 
@@ -13,7 +13,7 @@ OrderItems.init(
       primaryKey: true,
       autoIncrement: true,
     },
-    orderId: {
+    orderDetailId: {
       type: DataTypes.INTEGER,
       allowNull: false,
     },
@@ -49,6 +49,12 @@ OrderItems.init(
 // Define the association between OrderDetails and OrderItems
 OrderDetails.hasMany(OrderItems, {
   foreignKey: 'orderDetailId',
+  onDelete: 'CASCADE',
+  onUpdate: 'CASCADE',
+});
+
+Product.hasMany(Product, {
+  foreignKey: 'productId',
   onDelete: 'CASCADE',
   onUpdate: 'CASCADE',
 });

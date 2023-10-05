@@ -1,6 +1,7 @@
 const { DataTypes, Model } = require('sequelize');
 const moment = require('moment');
 const db = require('../services/database');
+const User = require('./users');
 
 class OrderDetails extends Model {}
 
@@ -11,16 +12,12 @@ OrderDetails.init(
       primaryKey: true,
       autoIncrement: true,
     },
-    orderId: {
+    userId: {
       type: DataTypes.INTEGER,
       allowNull: false,
     },
-    productId: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-    },
-    quantity: {
-      type: DataTypes.INTEGER,
+    state: {
+      type: DataTypes.STRING,
       allowNull: false,
     },
     createdAt: {
