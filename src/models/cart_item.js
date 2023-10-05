@@ -2,7 +2,7 @@ const { DataTypes, Model } = require('sequelize');
 const moment = require('moment');
 const db = require('../services/database');
 const Cart = require('./cart'); // Assuming you have a Cart model
-const Product = require('./products'); // Assuming you have a Product model
+const Product = require('./product'); // Assuming you have a Product model
 
 class CartItem extends Model {}
 

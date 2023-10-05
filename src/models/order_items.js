@@ -1,6 +1,8 @@
 const { DataTypes, Model } = require('sequelize');
 const moment = require('moment');
+const OrderDetails = require('./order_details');
 const db = require('../services/database');
+
 
 class OrderItems extends Model {}
 

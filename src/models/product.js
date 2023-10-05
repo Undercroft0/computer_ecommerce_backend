@@ -40,8 +40,9 @@ Product.init(
   },
   {
     sequelize: db,
-    modelName: 'Product',
+    modelName: 'product',
     freezeTableName: true,
+    tableName: 'product',
   }
 );
 
