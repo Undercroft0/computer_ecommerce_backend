@@ -112,6 +112,25 @@ exports.viewProduct = asyncHandler(async (req, res, next) => {
   }
 });
 
+exports.getAllProducts = asyncHandler(async (req, res, next) => {
+  try {
+
+    const products = await Product.findAll({
+      attributes: ['name', 'price']
+    });
+
+    res.status(200).json({
+      success: true,
+      data: products
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: error.message
+    });
+  }
+});
+
 exports.rateProduct = asyncHandler(async (req, res, next) => {
   try {
     const productId = req.params.id;

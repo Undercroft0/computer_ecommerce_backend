@@ -27,7 +27,7 @@ const sequelize = new Sequelize(
 );
 
 async function initialize() {
-  console.log("connecting to db...");
+  console.log("Connecting to database");
 
   pool = new Pool({
     host: process.env.PG_HOST,
@@ -41,7 +41,7 @@ async function initialize() {
 }
 
 async function close() {
-  console.log("db closing...");
+  console.log("Database closed");
 }
 
 module.exports = sequelize;

@@ -37,7 +37,7 @@ ProductRating.init(
   },
   {
     sequelize: db,
-    modelName: 'ProductRating', 
+    modelName: 'product_rating', 
     freezeTableName: true, 
   }
 );

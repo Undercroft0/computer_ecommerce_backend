@@ -14,7 +14,7 @@ Users.init(
     },
     phone_number: {
       type: DataTypes.STRING,
-      unique: true, // Add unique constraint
+      unique: true, 
       allowNull:false
     },
     email: {

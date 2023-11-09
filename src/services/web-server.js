@@ -7,13 +7,6 @@ const path = require('path');
 const app = express();
 const port = process.env.PORT;
 
-// // Set up view engine
-// app.set('view engine', 'ejs');
-// app.set('views', './src/views');
-
-//copy code from this github if it's necessary https://github.com/bradtraversy/chatcord
-
-//const indexRoute = require('./routes/index.Route');
 const loginRoute = require('../routes/login.Route');
 const usersRoute = require('../routes/users.Route');
 const commentsRoute = require('../routes/comments.Route');
@@ -99,7 +92,7 @@ function initialize() {
   .then(() => OrderItem.sync())
   
   app.listen(process.env.PORT, function () {
-    console.log("Server is ready at" + process.env.PORT);
+    console.log("Server is ready at : " + process.env.PORT + " port");
   });
 }
 

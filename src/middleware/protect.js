@@ -12,7 +12,7 @@ exports.protect = asyncHandler(async (req, res, next) => {
     });
     return;
   }
-  //request-н header хэсгээс bearer токен авах
+  // Request header from which to extract the bearer token
   const token = req.headers.authorization.split(" ")[1];
   if (!token) {
     res.status(401).json({
@@ -26,14 +26,7 @@ exports.protect = asyncHandler(async (req, res, next) => {
     const decoded = jwt.decode(token, { complete: true });
 
     req.userid = decoded.payload.userid;
-    // req.login = decoded.payload.login;
-    // req.company_id = decoded.payload.company_id;
-    // req.is_type = decoded.payload.is_type;
     req.email = decoded.payload.email;
-    // req.check_lot_id = decoded.payload.check_lot_id;
-    req.username = decoded.payload.username;
-    // // const connection_id = "odoo_undram";
-    // // req.odoo_conn = odoo[connection_id];
 
     next();
   } catch (err) {

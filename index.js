@@ -20,7 +20,7 @@ app.use('/upload', express.static('src/upload'));
 async function startup() {
   try {
     await webServer.initialize(app);
-    console.log("Вэб серверийг амжилттай асаалаа...");
+    console.log("Вэб серверийг амжилттай аслаа");
   } catch (err) {
     console.error(err);
     process.exit(1);
@@ -28,7 +28,7 @@ async function startup() {
 
   try {
     await database.initialize();
-    console.log("Өгөгдлийн сантай амжилттай холбогдлоо...");
+    console.log("Өгөгдлийн сантай амжилттай холбогдсон");
   } catch (err) {
     console.error(err);
     process.exit(1);

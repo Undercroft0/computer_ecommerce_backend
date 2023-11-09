@@ -8,11 +8,10 @@ const fs = require("fs");
 const path = require("path");
 const { raw } = require("body-parser");
 const nodemailer = require("nodemailer");
-
 exports.createUser = asyncHandler(async (req, res, next) => {
-  const { username, email, password } = req.body;
+  const { phone_number, email, password } = req.body;
 
-  if (!username || !email || !password) {
+  if (!phone_number || !email || !password) {
     return res.status(400).json({
       success: false,
       message: "Талбар дутуу байна",
@@ -23,7 +22,7 @@ exports.createUser = asyncHandler(async (req, res, next) => {
     const existingUser = await users.findOne({
       where: {
         [Op.or]: [
-          { username: username },
+          { phone_number: phone_number },
           { email: email },
         ],
       },
@@ -40,7 +39,7 @@ exports.createUser = asyncHandler(async (req, res, next) => {
     const encryptedPassword = await bcrypt.hash(password, salt);
 
     const newUser = await users.create({
-      username: username,
+      phone_number: phone_number,
       email: email,
       password: encryptedPassword,
       role: "User",
@@ -49,7 +48,7 @@ exports.createUser = asyncHandler(async (req, res, next) => {
     const token = jwt.sign(
       {
         email: newUser.email,
-        username: newUser.username,
+        phone_number: newUser.phone_number,
         userid: newUser.userid,
       },
       process.env.JWT_SECRET,
@@ -149,6 +148,7 @@ exports.createUser = asyncHandler(async (req, res, next) => {
   }
 });
 
+
 exports.checkVerification = asyncHandler(async (req, res, next) => {
   const { email } = req.body;
 
@@ -164,12 +164,10 @@ exports.checkVerification = asyncHandler(async (req, res, next) => {
     res.status(500).json({ message: 'Server error' });
   }
 });
-
 exports.registerUser = asyncHandler(async (req, res, next) => {
-  const { username, email, password, role } = req.body;
+  const { email, password, role } = req.body;
 
-  if (!username || !email || !password || !role) {
-    console.log("aldaa end bn");
+  if (!email || !password || !role) {
     return res.status(400).json({
       success: false,
       message: "Талбар дутуу байна",
@@ -178,31 +176,29 @@ exports.registerUser = asyncHandler(async (req, res, next) => {
 
   const existingUser = await users.findAll({
     where: {
-      [Op.or]: [{ username: username }, { email: email }],
+      [Op.or]: [{ email: email }],
     },
   });
 
   if (existingUser.length > 0) {
-    return res.status(500).json({
+    return res.status(409).json({
       success: false,
-      message: "Бүртэлтэй байна",
+      message: "Бүртгэлтэй байна",
     });
   }
 
   try {
     const salt = await bcrypt.genSalt(10);
     let encryptedPassword = await bcrypt.hash(password, salt);
-    console.log("burteneee");
+
     await users.create({
-      username: username,
       email: email,
       password: encryptedPassword,
       role: role,
     });
-    console.log("burtgetseeen");
+
     return res.status(200).json({
       success: true,
-      // token: encryptedPassword,
       message: "Амжилттай бүртгэлээ",
     });
   } catch (err) {
