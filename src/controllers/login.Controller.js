@@ -38,14 +38,14 @@ exports.Login = asyncHandler(async (req, res, next) => {
   if (passwordMatch) {
     const attributes = {
       id: user.id,
-      username: user.username,
+      phone_number: user.phone_number,
       email: user.email,
     };
 
     const token = jwt.sign(
       {
         userid: attributes.id,
-        username: attributes.username,
+        phone_number: attributes.phone_number,
         email: attributes.email,
       },
       process.env.JWT_SECRET,
@@ -197,7 +197,7 @@ exports.adminLogin = asyncHandler(async (req, res, next) => {
       bcrypt.compare(password, oldPassword).then(async (result) => {
         if (result == true) {
           const attributes = await Users.findOne({
-            attributes: ["id", "username", "email"],
+            attributes: ["id", "email"],
             where: {
               [Op.and]: [
                 {
@@ -208,11 +208,9 @@ exports.adminLogin = asyncHandler(async (req, res, next) => {
           });
 
           const userid = attributes.id;
-          const username = attributes.username;
           const token = jwt.sign(
             {
               userid,
-              username,
               email,
             },
             process.env.JWT_SECRET,
@@ -296,19 +294,20 @@ exports.adminLogin = asyncHandler(async (req, res, next) => {
 exports.verifyUser = asyncHandler(async (req, res, next) => {
   const token = req.params.token;
   console.log("got token as params!!!");
+  console.log("token" , token);
 
   try {
     jwt.verify(token, process.env.JWT_SECRET);
     const decoded = jwt.decode(token, { complete: true });
     console.log("decoded successfully");
     userid = decoded.payload.userid;
-    username = decoded.payload.username;
+    phone_number = decoded.payload.phone_number;
     email = decoded.payload.email;
 
     const user = await Users.findOne({
       where: {
         email: email,
-        username: username
+        phone_number: phone_number,
       }
     });
     console.log("found user info ---------" + user.verified);
@@ -320,7 +319,7 @@ exports.verifyUser = asyncHandler(async (req, res, next) => {
         {
           where: {
             email: email,
-            username: username
+            phone_number: phone_number
           }
         }
       );

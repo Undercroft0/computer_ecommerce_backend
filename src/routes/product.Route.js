@@ -4,7 +4,7 @@ const { createProduct, editProduct, viewProduct, rateProduct , getAllProducts} =
 
 router.route("/createProduct").post(createProduct);
 router.route("/editProduct").post(editProduct);
-router.route("/viewProduct").post(viewProduct);
+router.route("/viewProduct/:id").get(viewProduct);
 router.route("/rateProduct").post(rateProduct);
 router.route("/getAllProducts").get(getAllProducts);
 

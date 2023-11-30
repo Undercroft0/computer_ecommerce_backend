@@ -165,9 +165,9 @@ exports.checkVerification = asyncHandler(async (req, res, next) => {
   }
 });
 exports.registerUser = asyncHandler(async (req, res, next) => {
-  const { email, password, role } = req.body;
+  const { email, password, role, phone_number } = req.body;
 
-  if (!email || !password || !role) {
+  if (!email || !password || !role || !phone_number) {
     return res.status(400).json({
       success: false,
       message: "Талбар дутуу байна",
@@ -176,7 +176,7 @@ exports.registerUser = asyncHandler(async (req, res, next) => {
 
   const existingUser = await users.findAll({
     where: {
-      [Op.or]: [{ email: email }],
+      [Op.or]: [{ email: email }, { phone_number: phone_number }],
     },
   });
 
@@ -195,6 +195,7 @@ exports.registerUser = asyncHandler(async (req, res, next) => {
       email: email,
       password: encryptedPassword,
       role: role,
+      phone_number: phone_number,
     });
 
     return res.status(200).json({
@@ -209,6 +210,7 @@ exports.registerUser = asyncHandler(async (req, res, next) => {
     });
   }
 });
+
 
 exports.getUsers = asyncHandler(async (req, res, next) => {
   //method for admin that gets every users

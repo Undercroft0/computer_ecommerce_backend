@@ -114,19 +114,24 @@ exports.viewProduct = asyncHandler(async (req, res, next) => {
 
 exports.getAllProducts = asyncHandler(async (req, res, next) => {
   try {
+    // Fetch all products
+    const products = await Product.findAll();
 
-    const products = await Product.findAll({
-      attributes: ['name', 'price']
-    });
+    if (!products) {
+      return res.status(404).json({
+        success: false,
+        error: "No products found",
+      });
+    }
 
     res.status(200).json({
       success: true,
-      data: products
+      data: products,
     });
   } catch (error) {
     res.status(500).json({
       success: false,
-      error: error.message
+      error: error.message,
     });
   }
 });
