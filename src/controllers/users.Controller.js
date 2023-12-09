@@ -255,7 +255,7 @@ exports.getUser = asyncHandler(async (req, res, next) => {
 
 exports.updateUser = asyncHandler(async (req, res, next) => {
   const id = req.params.id;
-  const { email, username, password, role } = req.body;
+  const { email, phone_number, password, role } = req.body;
   
   const user = await users.findOne({ where: { id: id } });
   
@@ -265,8 +265,8 @@ exports.updateUser = asyncHandler(async (req, res, next) => {
     if (email) {
       updatedUserData.email = email;
     }
-    if (username) {
-      updatedUserData.username = username;
+    if (phone_number) {
+      updatedUserData.phone_number = phone_number;
     }
     // Uncomment and update the password field if needed in the future
     // if (password) {
