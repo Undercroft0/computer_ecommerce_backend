@@ -1,6 +1,9 @@
 const asyncHandler = require("../middleware/asyncHandler");
 const Product = require("../models/product"); // Import your Product model here
 const ProductRating = require("../models/product_rating"); // Import your ProductRating model here
+const Order = require("../models/order");
+const CartItem = require("../models/cart_items");
+
 
 exports.createProduct = asyncHandler(async (req, res, next) => {
   try {
@@ -139,7 +142,7 @@ exports.getAllProducts = asyncHandler(async (req, res, next) => {
 exports.rateProduct = asyncHandler(async (req, res, next) => {
   try {
     const productId = req.params.id;
-    const userId = req.userid; // Assuming you have user authentication
+    const userId = req.params.userid; // Assuming you have user authentication
 
     const { rating } = req.body;
 
@@ -174,6 +177,69 @@ exports.rateProduct = asyncHandler(async (req, res, next) => {
       },
     });
   } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: error.message,
+    });
+  }
+});
+exports.addToCart = asyncHandler(async (req, res, next) => {
+  try {
+    const { productId, quantity } = req.body;
+    const userId = req.params.userid; // Assuming you have user authentication
+
+    // Check if the user has an open order
+    let order = await Order.findOne({
+      where: {
+        userId,
+        state: 'open', // Assuming you have a state field for orders
+      },
+    });
+
+    // If no open order exists, create one
+    if (!order) {
+      order = await Order.create({
+        userId,
+        state: 'open',
+      });
+    }
+
+    // Now, you have the order (either existing or newly created)
+    const orderId = order.id;
+
+    // Create a new cart item with a default quantity of 0
+    const [cartItem, created] = await CartItem.findOrCreate({
+      where: {
+        userId,
+        productId,
+      },
+      defaults: {
+        userId,
+        productId,
+        quantity: 0,
+      },
+    });
+
+    // Log the values for debugging
+    console.log('created:', created);
+    console.log('cartItem:', cartItem);
+
+    // Ensure that cartItem is an instance of the Sequelize model
+    if (cartItem instanceof CartItem) {
+      // Now, you have the cart item with a valid quantity
+      cartItem.quantity += quantity;
+      await cartItem.save();
+
+      res.status(200).json({
+        success: true,
+        message: "Product added to the cart successfully",
+      });
+    } else {
+      // Handle the case where cartItem is not an instance of the model
+      throw new Error("Failed to create or find cart item");
+    }
+  } catch (error) {
+    console.error(error);
     res.status(500).json({
       success: false,
       error: error.message,

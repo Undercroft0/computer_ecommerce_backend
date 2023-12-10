@@ -1,11 +1,11 @@
 const { DataTypes, Model } = require('sequelize');
 const moment = require('moment');
 const db = require('../services/database');
-const User = require('./users');
+const User = require('./users'); // Assuming you have a User model
 
-class Cart extends Model {}
+class Order extends Model {}
 
-Cart.init(
+Order.init(
   {
     id: {
       type: DataTypes.INTEGER,
@@ -14,6 +14,10 @@ Cart.init(
     },
     userId: {
       type: DataTypes.INTEGER,
+      allowNull: false,
+    },
+    state: {
+      type: DataTypes.STRING,
       allowNull: false,
     },
     createdAt: {
@@ -31,16 +35,17 @@ Cart.init(
   },
   {
     sequelize: db,
-    modelName: 'Cart',
-    tableName: 'carts',
+    modelName: 'Order',
+    tableName: 'orders', // Assuming you want the table to be named 'orders'
     freezeTableName: true,
   }
 );
 
-User.hasOne(Cart, {
+// Define association between Order and User
+Order.belongsTo(User, {
   foreignKey: 'userId',
   onDelete: 'CASCADE',
   onUpdate: 'CASCADE',
 });
 
-module.exports = Cart;
+module.exports = Order;

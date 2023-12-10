@@ -20,12 +20,9 @@ const ProductCategory = require('../models/product_category');
 const ProductInventory = require('../models/product_inventory');
 const ProductRating = require('../models/product_rating');
 
-const CartItem = require('../models/cart_item');
-const Cart = require('../models/cart');
+const CartItem = require('../models/cart_items');
 const UserAddress = require('../models/user_address');
-const OrderDetails = require('../models/order_details');
-const OrderItem = require('../models/order_items');
-
+const OrderDetails = require('../models/order');
 
 // const scheduler = require("./scheduler"); // устгаж болохгүй!!!
 //uuganaaa
@@ -85,11 +82,9 @@ function initialize() {
   .then(() => Comments.sync())
   .then(() => ProductInventory.sync())
   .then(() => ProductRating.sync())
-  .then(() => Cart.sync())
   .then(() => CartItem.sync())
   .then(() => UserAddress.sync())
   .then(() => OrderDetails.sync())
-  .then(() => OrderItem.sync())
   
   app.listen(process.env.PORT, function () {
     console.log("Server is ready at : " + process.env.PORT + " port");
