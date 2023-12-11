@@ -2,7 +2,8 @@ const { DataTypes, Model } = require('sequelize');
 const moment = require('moment');
 const ProductInventory = require('./product_inventory');
 const ProductCategory = require('./product_category');
-const db = require("../services/database"); 
+const ProductImage = require('./product_image'); // Import the new model
+const db = require("../services/database");
 
 class Product extends Model {}
 
@@ -58,5 +59,7 @@ Product.hasMany(ProductInventory, {
   onDelete: "CASCADE",
   onUpdate: "CASCADE",
 });
+
+Product.hasMany(ProductImage, { as: 'images', foreignKey: 'productId' }); // New association with ProductImage model
 
 module.exports = Product;

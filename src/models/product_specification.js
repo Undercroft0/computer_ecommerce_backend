@@ -1,24 +1,28 @@
+// models/product_specification.js
 const { DataTypes, Model } = require('sequelize');
 const moment = require('moment');
 const db = require('../services/database');
-const ProductSpecification = require('./product_specification');
 
-class ProductCategory extends Model {}
+class ProductSpecification extends Model {}
 
-ProductCategory.init(
+ProductSpecification.init(
   {
     id: {
       type: DataTypes.INTEGER,
       primaryKey: true,
       autoIncrement: true,
     },
-    name: {
+    specification: {
       type: DataTypes.STRING,
       allowNull: false,
     },
-    description: {
+    value: {
       type: DataTypes.STRING,
       allowNull: true,
+    },
+    category_id: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
     },
     createdAt: {
       type: DataTypes.DATE,
@@ -35,16 +39,10 @@ ProductCategory.init(
   },
   {
     sequelize: db,
-    modelName: 'ProductCategory',
-    tableName: 'product_categories',
+    modelName: 'ProductSpecification',
+    tableName: 'product_specifications',
     freezeTableName: true,
   }
 );
 
-ProductCategory.hasMany(ProductSpecification, {
-  foreignKey: 'category_id',
-  onDelete: 'CASCADE',
-  onUpdate: 'CASCADE',
-});
-
-module.exports = ProductCategory;
+module.exports = ProductSpecification;

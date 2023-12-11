@@ -4,13 +4,12 @@ const ProductRating = require("../models/product_rating"); // Import your Produc
 const Order = require("../models/order");
 const CartItem = require("../models/cart_items");
 
+const ProductImage = require('../models/product_image'); // Import the ProductImage model
 
 exports.createProduct = asyncHandler(async (req, res, next) => {
   try {
-    // Extract product data from the request body
     const { name, desc, category_id, price } = req.body;
 
-    // Create a new product
     const product = await Product.create({
       name,
       desc,
@@ -18,11 +17,19 @@ exports.createProduct = asyncHandler(async (req, res, next) => {
       price,
     });
 
+    if (req.file) {
+      const productImage = await ProductImage.create({
+        imagePath: req.file.path,
+        productId: product.id
+      });
+    }
+
     res.status(201).json({
       success: true,
       data: product,
     });
   } catch (error) {
+    console.error(error);
     res.status(500).json({
       success: false,
       error: error.message,

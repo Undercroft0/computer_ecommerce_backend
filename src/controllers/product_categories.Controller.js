@@ -106,3 +106,20 @@ exports.viewCategory = asyncHandler(async (req, res, next) => {
     });
   }
 });
+
+exports.viewAllCategories = asyncHandler(async (req, res, next) => {
+  try {
+    // Find all categories
+    const categories = await ProductCategory.findAll();
+
+    res.status(200).json({
+      success: true,
+      data: categories,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: error.message,
+    });
+  }
+});
