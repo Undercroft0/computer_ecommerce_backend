@@ -3,6 +3,7 @@ const moment = require('moment');
 const ProductInventory = require('./product_inventory');
 const ProductCategory = require('./product_category');
 const ProductImage = require('./product_image'); // Import the new model
+const ProductSpecificationValue = require('./product_spec_values');
 const db = require("../services/database");
 
 class Product extends Model {}
@@ -61,5 +62,7 @@ Product.hasMany(ProductInventory, {
 });
 
 Product.hasMany(ProductImage, { as: 'images', foreignKey: 'productId' }); // New association with ProductImage model
+
+Product.hasMany(ProductSpecificationValue, { foreignKey: 'productId' }); 
 
 module.exports = Product;

@@ -1,5 +1,7 @@
 const asyncHandler = require("../middleware/asyncHandler");
 const ProductCategory = require("../models/product_category");
+const ProductSpecification = require("../models/product_specification");
+const ProductSpecificationValue = require("../models/product_spec_values");
 
 exports.createCategory = asyncHandler(async (req, res, next) => {
   try {
@@ -115,6 +117,73 @@ exports.viewAllCategories = asyncHandler(async (req, res, next) => {
     res.status(200).json({
       success: true,
       data: categories,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: error.message,
+    });
+  }
+});
+
+exports.addSpecification = asyncHandler(async (req, res, next) => {
+  try {
+    const { specification, category_id } = req.body;
+
+    const newSpecification = await ProductSpecification.create({
+      specification,
+      category_id,
+    });
+
+    res.status(201).json({
+      success: true,
+      data: newSpecification,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: error.message,
+    });
+  }
+});
+
+// Add the new controller for adding product specification values
+exports.addValue = asyncHandler(async (req, res, next) => {
+  try {
+  //  console.log("REQ boDY Of Add VAlue", req.body); // Log the request body
+
+    const { productId, specificationId, value } = req.body;
+
+    const newValue = await ProductSpecificationValue.create({
+      productId,
+      specificationId,
+      value,
+    });
+
+    res.status(201).json({
+      success: true,
+      data: newValue,
+    });
+  } catch (error) { 
+    console.error(error); 
+    res.status(500).json({
+      success: false,
+      error: error.message,
+    });
+  }
+});
+
+exports.getSpecificationsByCategory = asyncHandler(async (req, res, next) => {
+  try {
+    const { category_id } = req.params;
+
+    const specifications = await ProductSpecification.findAll({
+      where: { category_id },
+    });
+
+    res.status(200).json({
+      success: true,
+      data: specifications,
     });
   } catch (error) {
     res.status(500).json({

@@ -25,6 +25,8 @@ const UserAddress = require('../models/user_address');
 const OrderDetails = require('../models/order');
 const ProductImage = require("../models/product_image");
 const ProductSpecification = require("../models/product_specification");
+const ProductSpecificationValue = require("../models/product_spec_values");
+
 
 // const scheduler = require("./scheduler"); // устгаж болохгүй!!!
 //uuganaaa
@@ -89,6 +91,7 @@ function initialize() {
   .then(() => OrderDetails.sync())
   .then(() => ProductImage.sync())
   .then(() => ProductSpecification.sync())
+  .then(() => ProductSpecificationValue.sync())
   
   app.listen(process.env.PORT, function () {
     console.log("Server is ready at : " + process.env.PORT + " port");

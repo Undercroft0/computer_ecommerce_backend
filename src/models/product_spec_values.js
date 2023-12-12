@@ -1,24 +1,28 @@
-// models/product_specification.js
+// models/product_specification_value.js
 const { DataTypes, Model } = require('sequelize');
 const moment = require('moment');
 const db = require('../services/database');
 
-class ProductSpecification extends Model {}
+class ProductSpecificationValue extends Model {}
 
-ProductSpecification.init(
+ProductSpecificationValue.init(
   {
     id: {
       type: DataTypes.INTEGER,
       primaryKey: true,
       autoIncrement: true,
     },
-    specification: {
-      type: DataTypes.STRING,
-      allowNull: false,
-    },
-    category_id: {
+    productId: {
       type: DataTypes.INTEGER,
       allowNull: false,
+    },
+    specificationId: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+    },
+    value: {
+      type: DataTypes.STRING,
+      allowNull: true,
     },
     createdAt: {
       type: DataTypes.DATE,
@@ -35,10 +39,10 @@ ProductSpecification.init(
   },
   {
     sequelize: db,
-    modelName: 'ProductSpecification',
-    tableName: 'product_specifications',
+    modelName: 'ProductSpecificationValue',
+    tableName: 'product_specification_values',
     freezeTableName: true,
   }
 );
 
-module.exports = ProductSpecification;
+module.exports = ProductSpecificationValue;
