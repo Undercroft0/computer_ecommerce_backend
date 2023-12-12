@@ -3,6 +3,7 @@ const Product = require("../models/product"); // Import your Product model here
 const ProductRating = require("../models/product_rating"); // Import your ProductRating model here
 const Order = require("../models/order");
 const CartItem = require("../models/cart_items");
+const path = require('path');
 
 const ProductImage = require('../models/product_image'); // Import the ProductImage model
 
@@ -96,31 +97,31 @@ exports.editProduct = asyncHandler(async (req, res, next) => {
   }
 });
 
-exports.viewProduct = asyncHandler(async (req, res, next) => {
-  try {
-    const productId = req.params.id;
+  exports.viewProduct = asyncHandler(async (req, res, next) => {
+    try {
+      const productId = req.params.id;
 
-    // Find the product by ID
-    const product = await Product.findByPk(productId);
+      // Find the product by ID
+      const product = await Product.findByPk(productId);
 
-    if (!product) {
-      return res.status(404).json({
+      if (!product) {
+        return res.status(404).json({
+          success: false,
+          error: "Product not found",
+        });
+      }
+
+      res.status(200).json({
+        success: true,
+        data: product,
+      });
+    } catch (error) {
+      res.status(500).json({
         success: false,
-        error: "Product not found",
+        error: error.message,
       });
     }
-
-    res.status(200).json({
-      success: true,
-      data: product,
-    });
-  } catch (error) {
-    res.status(500).json({
-      success: false,
-      error: error.message,
-    });
-  }
-});
+  });
 
 exports.getAllProducts = asyncHandler(async (req, res, next) => {
   try {
@@ -253,3 +254,25 @@ exports.addToCart = asyncHandler(async (req, res, next) => {
     });
   }
 });
+
+  exports.getProductImage = asyncHandler(async (req, res) => {
+    const productId = req.params.productId;
+
+    // Fetch product image data from the database based on the product ID
+    const images = await ProductImage.findAll({
+      where: { productId },
+    });
+
+    if (!images || images.length === 0) {
+      // Instead of sending a 404 error, send a response with a specific message
+      return res.status(200).json({ message: 'No image available for this product' });
+    }
+
+    // Assuming each product has only one image for simplicity
+    const image = images[0];
+
+    // Send the image file with an absolute path
+    const imagePath = path.join(__dirname, '..', '..', image.imagePath);
+    console.log('Image Path:', imagePath); // Log the imagePath
+    res.sendFile(imagePath);
+  });

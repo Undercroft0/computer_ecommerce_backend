@@ -1,7 +1,7 @@
 // product.Route.js
 
 const router = require("express").Router();
-const { createProduct, editProduct, viewProduct, rateProduct, getAllProducts, addToCart } = require("../controllers/product.Controller");
+const { createProduct, editProduct, viewProduct, rateProduct, getAllProducts, addToCart, getProductImage } = require("../controllers/product.Controller");
 const imageUpload = require('../middleware/product_image');
 
 router.route("/createProduct").post(imageUpload, createProduct);
@@ -12,5 +12,6 @@ router.route("/rateProduct/:id/:userid").post(rateProduct);
 router.route("/addToCart/:userid").post(addToCart);
 
 router.route("/getAllProducts").get(getAllProducts);
+router.route("/productImages/:productId").get(getProductImage);
 
 module.exports = router;
