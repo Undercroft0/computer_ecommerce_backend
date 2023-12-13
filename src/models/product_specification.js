@@ -2,6 +2,7 @@
 const { DataTypes, Model } = require('sequelize');
 const moment = require('moment');
 const db = require('../services/database');
+const ProductSpecificationValue = require('./product_spec_values');
 
 class ProductSpecification extends Model {}
 
@@ -40,5 +41,8 @@ ProductSpecification.init(
     freezeTableName: true,
   }
 );
+
+ProductSpecification.hasMany(ProductSpecificationValue, { foreignKey: 'specificationId' });
+
 
 module.exports = ProductSpecification;

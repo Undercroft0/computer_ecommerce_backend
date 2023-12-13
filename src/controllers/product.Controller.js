@@ -1,6 +1,8 @@
 const asyncHandler = require("../middleware/asyncHandler");
 const Product = require("../models/product"); // Import your Product model here
 const ProductRating = require("../models/product_rating"); // Import your ProductRating model here
+const ProductSpecificationValue = require("../models/product_spec_values");
+const ProductSpecification = require("../models/product_specification");
 const Order = require("../models/order");
 const CartItem = require("../models/cart_items");
 const path = require('path');
@@ -10,10 +12,12 @@ const ProductImage = require('../models/product_image'); // Import the ProductIm
 exports.createProduct = asyncHandler(async (req, res, next) => {
   try {
     const { name, desc, category_id, price } = req.body;
+    console.log('desc', desc);
 
+    description = desc;
     const product = await Product.create({
       name,
-      desc,
+      description,
       category_id,
       price,
     });
@@ -254,6 +258,114 @@ exports.addToCart = asyncHandler(async (req, res, next) => {
     });
   }
 });
+exports.getCart = async (req, res, next) => {
+  try {
+    const userId = req.params.userid;
+
+    const cartItems = await CartItem.findAll({
+      where: { userId },
+      include: [
+        { 
+          model: Product, 
+          attributes: ['id', 'name', 'price'],
+          include: [
+            { model: ProductImage, as: 'images', attributes: ['imagePath'] } // Use the 'as' keyword here
+          ]
+        }
+      ],
+      raw: true,
+    });
+
+    console.log('Cart items:', cartItems);
+
+    // Log image paths for debugging
+    cartItems.forEach((item) => {
+      if (item['product.images'] && item['product.images'].length > 0) {
+        console.log(`Image Path for Product ${item['product.id']}:`, item['product.images'][0].imagePath);
+      }
+    });
+
+    res.status(200).json({
+      success: true,
+      data: cartItems,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      success: false,
+      error: error.message,
+    }); 
+  }
+};
+
+
+
+
+exports.updateCartItem = async (req, res, next) => {
+  try {
+    const { cartItemId, quantity } = req.body;
+
+    // Find the cart item for the specified cartItemId
+    const cartItem = await CartItem.findByPk(cartItemId);
+
+    // If the cart item doesn't exist, handle the error
+    if (!cartItem) {
+      console.error('Cart item not found:', cartItemId);
+      return res.status(404).json({
+        success: false,
+        error: 'Cart item not found',
+      });
+    }
+
+    // Check if cartItem is an instance of Sequelize's Model
+    if (!(cartItem instanceof CartItem)) {
+      console.error('Invalid cart item:', cartItem);
+      // Handle the case where cartItem is not an instance of the model
+      throw new Error("Failed to find a valid cart item");
+    }
+
+    // Update the quantity of the cart item
+    cartItem.quantity = quantity;
+    await cartItem.save();
+
+    res.status(200).json({
+      success: true,
+      message: 'Cart item updated successfully',
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      success: false,
+      error: error.message,
+    });
+    }
+  };
+
+  exports.removeFromCart = async (req, res, next) => {
+  try {
+    const userId = req.params.userid;
+    const cartItemId = req.params.cartitemid;
+
+    // Implement logic to remove the item from the cart
+    await CartItem.destroy({
+      where: {
+        id: cartItemId,
+        userId: userId,
+      },
+    });
+
+    res.status(200).json({
+      success: true,
+      message: 'Item removed from cart successfully.',
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      success: false,
+      error: error.message,
+    });
+  }
+};
 
   exports.getProductImage = asyncHandler(async (req, res) => {
     const productId = req.params.productId;
@@ -276,3 +388,23 @@ exports.addToCart = asyncHandler(async (req, res, next) => {
     console.log('Image Path:', imagePath); // Log the imagePath
     res.sendFile(imagePath);
   });
+
+  exports.getProductSpecifications = asyncHandler(async (req, res) => {
+    const productId = req.params.productId;
+  
+    // Fetch product specifications based on the product ID
+    const specifications = await ProductSpecification.findAll({
+      raw: true,
+      include: {
+        model: ProductSpecificationValue,
+        where: { productId: productId },
+      },
+    });
+  
+    if (!specifications || specifications.length === 0) {
+      return res.status(200).json({ message: 'No specifications available for this product' });
+    }
+  
+    res.status(200).json({ data: specifications });
+  });
+  
