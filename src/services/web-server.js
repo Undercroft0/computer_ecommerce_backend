@@ -23,6 +23,7 @@ const ProductRating = require('../models/product_rating');
 const CartItem = require('../models/cart_items');
 const UserAddress = require('../models/user_address');
 const OrderDetails = require('../models/order');
+const OrderItem = require('../models/order_items');
 const ProductImage = require("../models/product_image");
 const ProductSpecification = require("../models/product_specification");
 const ProductSpecificationValue = require("../models/product_spec_values");
@@ -63,6 +64,7 @@ function initialize() {
   const uploadRoute = require('../routes/upload.Route');
   const productRoute = require('../routes/product.Route');
   const categoryRoute = require('../routes/product_category.Route');
+  const orderRoute = require('../routes/order.Route');
 
   app.use('/auth', loginRoute);
   app.use('/user', usersRoute);
@@ -70,6 +72,7 @@ function initialize() {
   app.use('/image',uploadRoute);
   app.use('/product', productRoute);
   app.use('/category', categoryRoute);
+  app.use('/order', orderRoute);
   app.use('/uploads', express.static(path.join(__dirname, '../src/upload'))); // Serve static files from the 'src/upload' folder
   app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, '../src/upload/index.html'));
@@ -92,6 +95,7 @@ function initialize() {
   .then(() => ProductImage.sync())
   .then(() => ProductSpecification.sync())
   .then(() => ProductSpecificationValue.sync())
+  .then(() => OrderItem.sync())
   
   app.listen(process.env.PORT, function () {
     console.log("Server is ready at : " + process.env.PORT + " port");
