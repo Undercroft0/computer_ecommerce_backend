@@ -151,48 +151,43 @@ exports.getAllProducts = asyncHandler(async (req, res, next) => {
   }
 });
 
-exports.rateProduct = asyncHandler(async (req, res, next) => {
+exports.rateProduct = asyncHandler(async (req, res) => {
+  const { productId, rating } = req.body;
+
+  // Check if the user is authenticated
+  if (!req.user) {
+    return res.status(401).json({ success: false, message: 'User not authenticated' });
+  }
+
+  const userId = req.user.id;
+
   try {
-    const productId = req.params.id;
-    const userId = req.params.userid; // Assuming you have user authentication
-
-    const { rating } = req.body;
-
-    // Create or update a product rating by the user
-    let productRating = await ProductRating.findOne({
-      where: {
-        productId,
-        userId,
-      },
+    // Check if the user has already rated the product
+    const existingRating = await ProductRating.findOne({
+      where: { userId, productId },
     });
 
-    if (!productRating) {
-      productRating = await ProductRating.create({
-        productId,
-        userId,
-        rating,
-      });
+    if (existingRating) {
+      // If the user has already rated, update the rating
+      await existingRating.update({ rating });
     } else {
-      productRating.rating = rating;
-      await productRating.save();
+      // If the user has not rated, create a new rating
+      await ProductRating.create({ userId, productId, rating });
     }
 
-    // Calculate the average rating for the product
-    const averageRating = await ProductRating.average("rating", {
+    // Calculate the average rating for the product and update the product's rating field
+    const averageRating = await ProductRating.findOne({
+      attributes: [[sequelize.fn('avg', sequelize.col('rating')), 'averageRating']],
       where: { productId },
     });
 
-    res.status(200).json({
-      success: true,
-      data: {
-        averageRating,
-      },
-    });
+    // Update the product's rating field
+    await Product.update({ rating: averageRating.dataValues.averageRating }, { where: { id: productId } });
+
+    res.status(200).json({ success: true, message: 'Product rated successfully' });
   } catch (error) {
-    res.status(500).json({
-      success: false,
-      error: error.message,
-    });
+    console.error(error);
+    res.status(500).json({ success: false, error: error.message });
   }
 });
 exports.addToCart = asyncHandler(async (req, res, next) => {
@@ -387,6 +382,29 @@ exports.updateCartItem = async (req, res, next) => {
     const imagePath = path.join(__dirname, '..', '..', image.imagePath);
     console.log('Image Path:', imagePath); // Log the imagePath
     res.sendFile(imagePath);
+  });
+
+  exports.getProductImages = asyncHandler(async (req, res) => {
+    const productId = req.params.productId;
+  
+    // Fetch product images data from the database based on the product ID
+    const productImages = await ProductImage.findAll({
+      where: { productId },
+    });
+  
+    if (!productImages || productImages.length === 0) {
+      // Instead of sending a 404 error, send a response with a specific message
+      return res.status(200).json({ message: 'No images available for this product' });
+    }
+  
+    // Map the productImages array to extract image URLs
+    const imageUrls = productImages.map((image) => {
+      const imagePath = path.join(__dirname, '..', '..', image.imagePath);
+      return `http://localhost:8001${imagePath}`;
+    });
+  
+    // Send the array of image URLs
+    res.status(200).json(imageUrls);
   });
 
   exports.getProductSpecifications = asyncHandler(async (req, res) => {
