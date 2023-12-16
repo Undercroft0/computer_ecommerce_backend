@@ -383,30 +383,25 @@ exports.updateCartItem = async (req, res, next) => {
     console.log('Image Path:', imagePath); // Log the imagePath
     res.sendFile(imagePath);
   });
-
+  
   exports.getProductImages = asyncHandler(async (req, res) => {
     const productId = req.params.productId;
   
-    // Fetch product images data from the database based on the product ID
-    const productImages = await ProductImage.findAll({
+    // Fetch all product images data from the database based on the product ID
+    const images = await ProductImage.findAll({
       where: { productId },
     });
   
-    if (!productImages || productImages.length === 0) {
+    if (!images || images.length === 0) {
       // Instead of sending a 404 error, send a response with a specific message
       return res.status(200).json({ message: 'No images available for this product' });
     }
   
-    // Map the productImages array to extract image URLs
-    const imageUrls = productImages.map((image) => {
-      const imagePath = path.join(__dirname, '..', '..', image.imagePath);
-      return `http://localhost:8001${imagePath}`;
-    });
-  
-    // Send the array of image URLs
-    res.status(200).json(imageUrls);
+    // Send an array of image file paths
+    const imagePaths = images.map((image) => path.join(__dirname, '..', '..', image.imagePath));
+    console.log('Image Paths:', imagePaths); // Log the imagePaths
+    res.status(200).json({ imagePaths });
   });
-
   exports.getProductSpecifications = asyncHandler(async (req, res) => {
     const productId = req.params.productId;
   

@@ -19,7 +19,7 @@ router.route("/removeFromCart/:userid/:cartitemid").delete(removeFromCart);
 
 router.route("/getAllProducts").get(getAllProducts);
 router.route("/productImage/:productId").get(getProductImage);
-router.route("/productImage/:productId").get(getProductImages);
+router.route("/productImages/:productId").get(getProductImages);
 
 router.route("/getSpecifications/:productId").get(getProductSpecifications);
 
